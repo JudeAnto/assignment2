@@ -1,5 +1,3 @@
-package assignment2;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +26,9 @@ public class Client {
         String line;
         System.out.println("Connected to " + host + ":" + port);
         System.out.println(streamScanner.nextLine());
-        
-        
-        
+
+
+
         while (!(line = scanner.nextLine()).equals("")) {
             pw.println(my+ ": " + line);
             System.out.println(streamScanner.nextLine());
