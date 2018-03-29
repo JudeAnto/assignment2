@@ -8,8 +8,8 @@ import java.util.Scanner;
 public class ServerThread implements Runnable {
     private Socket socket;
     private InputStream io;
-    private OutputStream os;
     private PrintWriter pw;
+    private static final String filePath = "C:\\Jude\\a2test\\Server\\";
 
     ServerThread(Socket socket) {
         this.socket = socket;
@@ -23,19 +23,19 @@ public class ServerThread implements Runnable {
     public void run() {
         try {
             io = socket.getInputStream();
-            os = socket.getOutputStream();
 
             try (Scanner scanner = new Scanner(io)) {
-                pw = new PrintWriter(os, true);
-                pw.println("Connected...");
+                FileIO writeFile = new FileIO(filePath+scanner.nextLine());
+                String loadFile = "";
                 while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    //client:
-                    System.out.println(line);
-                    pw.println("Echo: " + line);
+                    loadFile += scanner.nextLine() + System.lineSeparator();
                 }
+                writeFile.writeCharFile(loadFile);
             } finally {
-                System.out.println("Client " + getId() + " has disconnected.");
+                //System.out.println("Server has disconnected.");
+                socket.close();
+                if (socket.isClosed())
+                    System.out.println("Successfully Disconnected!");
             }
         } catch (IOException e) {
             e.printStackTrace();

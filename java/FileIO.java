@@ -3,33 +3,35 @@ import java.io.*;
 public class FileIO {
 
     private String fileName = null;
+    private String fileContent = "";
+
     FileIO (String filePath) {
-        this.fileName = fileName;
+        this.fileName = filePath;
     }
 
-    public void readCharFile() {
+    public String readCharFile() {
 
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader input = new BufferedReader(fileReader);
+
             String line = null;
             while ((line = input.readLine()) != null) {
-                System.out.println(line);
+                fileContent += line+"\n";
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return fileContent;
     }
 
-    public void writeCharFile() {
+    public void writeCharFile(String fileContentToWrite) {
 
         try {
             PrintWriter output = new PrintWriter(fileName);
-
-            //boolean keepGoing = true;
-            String line = null;
-            output.println("hello");
+            output.println(fileContentToWrite);
             output.close();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
