@@ -1,37 +1,67 @@
 import javafx.application.Application;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
 public class Main extends Application {
-    private ListView<String> list = new ListView<String>();
+    private ListView<String> clientList = new ListView<String>();
+    private ListView<String> serverList = new ListView<String>();
+    private Button buttonUpload = new Button();
+    private Button buttonDownload = new Button();
+    private static String clientFileName = null;
+    private static String serverFileName = null;
     @Override
     public void start(Stage stage) {
         //Instantiating the BorderPane class
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(0,20,15, 20));
 
-        list.setItems(FileSource.getAllFiles());
-        ListView<String> list2 = new ListView<String>();
-        ObservableList<String> items = FXCollections.observableArrayList (
-                "Single", "Double", "Suite", "Family App");
-        list2.setItems(items);
+        clientList.setItems(new FileSource("C:\\Jude\\a2test\\Client").getAllFiles());
 
-        bPane.setLeft(list);
-        bPane.setRight(list2);
+        serverList.setItems(new FileSource("C:\\Jude\\a2test\\Server").getAllFiles());
+
+        bPane.setLeft(clientList);
+        bPane.setRight(serverList);
         bPane.setTop(addHBox());
         bPane.setCenter(addVBox());
+
+        clientList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                clientFileName = clientList.getSelectionModel().getSelectedItem();
+            }
+        });
+
+        serverList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                serverFileName = serverList.getSelectionModel().getSelectedItem();
+            }
+
+        });
+
+
+        buttonUpload.setOnAction(action -> {
+            FileIO myf = new FileIO("");
+                myf.readCharFile();
+        });
+
+        buttonDownload.setOnAction(action -> {
+            FileIO myf = new FileIO("");
+            myf.writeCharFile();
+        });
+
 
         Scene scene = new Scene(bPane, 600, 500);
         scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
@@ -53,7 +83,7 @@ public class Main extends Application {
         return vbox;
     }
     private Button addUploadButton() {
-        Button buttonUpload = new Button();
+
         buttonUpload.setPrefSize(30, 30);
         buttonUpload.setTranslateY(160);
         buttonUpload.setTranslateX(12);
@@ -61,7 +91,7 @@ public class Main extends Application {
         return buttonUpload;
     }
     private Button addDownloadButton() {
-        Button buttonDownload = new Button();
+
         buttonDownload.setPrefSize(30, 30);
         buttonDownload.setTranslateY(190);
         buttonDownload.setTranslateX(12);
