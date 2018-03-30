@@ -16,24 +16,30 @@ import javafx.stage.Stage;
 
 
 public class Main extends Application {
-    private ListView<String> clientList = new ListView<String>();
-    private ListView<String> serverList = new ListView<String>();
+
+    private static BorderPane bPane = new BorderPane();
+    private static ListView<String> clientList = new ListView<String>();
+    private static ListView<String> serverList = new ListView<String>();
     private Button buttonUpload = new Button();
     private Button buttonDownload = new Button();
     private static String clientFileName = null;
     private static String serverFileName = null;
-    private final String clientpath = "C:\\Jude\\a2test\\Client";
-    //private final String serverpath = "C:\\Jude\\a2test\\Server";
+    //here you can update client Path
+    private static String clientpath = "C:\\Jude\\a2test\\Client\\";
+
+    private final String serverPath = new ServerThread().getServerFilePath();
+
 
     @Override
     public void start(Stage stage) {
         //Instantiating the BorderPane class
-        BorderPane bPane = new BorderPane();
+
         bPane.setPadding(new Insets(0,20,15, 20));
 
         clientList.setItems(new FileSource(clientpath).getAllFiles());
 
-        serverList.setItems(new FileSource("C:\\Jude\\Assignment2\\src\\main\\resources\\SharedFolder").getAllFiles());
+
+        serverList.setItems(new FileSource(serverPath).getAllFiles());
 
         bPane.setLeft(clientList);
         bPane.setRight(serverList);
@@ -57,12 +63,31 @@ public class Main extends Application {
 
 
         buttonUpload.setOnAction(action -> {
-            this.runClientThread(clientFileName);
+            if (!(clientFileName == null)) {
+
+                this.runClientThread(clientFileName, 'u');
+                //this doesn't update until you run it twice. THe refresh DOES work but it's buggy!
+                this.updateServerList();
+
+            } else {
+                infoBox("Click on a file from your folder to Upload!"
+                        , "__FILE NOT CHOSEN__", null);
+            }
+
+
         });
 
         buttonDownload.setOnAction(action -> {
-            FileIO myf = new FileIO("");
-            //myf.writeCharFile();
+            if (!(serverFileName == null)) {
+
+                this.runClientThread(serverFileName, 'd');
+                //this doesn't update until you run it twice. THe refresh DOES work but it's buggy!
+                this.updateClientList();
+
+            } else {
+                infoBox("Click on a file on the Shared Folder to Upload!"
+                        , "__FILE NOT CHOSEN__", null);
+            }
         });
 
 
@@ -114,8 +139,20 @@ public class Main extends Application {
         alert.showAndWait();
     }
 
-    private void runClientThread(String fileName) {
-        Thread clientThread = new Thread(new Client(fileName));
+    public void updateClientList() {
+        clientList.setItems(new FileSource(clientpath).getAllFiles());
+        bPane.setLeft(clientList);
+    }
+    public void updateServerList() {
+        serverList.setItems(new FileSource(serverPath).getAllFiles());
+        bPane.setRight(serverList);
+    }
+
+    private void runClientThread(String fileName, char ab) {
+
+        //
+        //MAKE THE CLIENT TAKE VARIABLE -u or -d
+        Thread clientThread = new Thread(new Client(fileName, ab, clientpath));
         clientThread.setDaemon(true);
         clientThread.start();
     }

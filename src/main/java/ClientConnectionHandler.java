@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public class ClientConnectionHandler {
     public static void main(String[] args) throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(20500)) {
+        try (ServerSocket serverSocket = new ServerSocket(20202)) {
             System.out.println("Waiting for users to connect...");
 
             while (true) {
