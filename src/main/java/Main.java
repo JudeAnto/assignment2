@@ -24,18 +24,22 @@ public class Main extends Application {
     private Button buttonDownload = new Button();
     private static String clientFileName = null;
     private static String serverFileName = null;
-    //here you can update client Path
-    private static String clientpath = "C:\\Jude\\a2test\\Client\\";
 
+    //REQUIREMENT: necessary to add the filepath of your client folder
+    //Ex: C:\\jude\\assignment2\\resources\\ClientFolder\\
+    private static final String clientpath = "!MUST-ADD-YOUR-CLIENT-FOLDER-PATH-IN-HERE!";
+
+    //gets server path from the server
     private final String serverPath = new ServerThread().getServerFilePath();
 
 
     @Override
     public void start(Stage stage) {
-        //Instantiating the BorderPane class
 
+        //Instantiating the BorderPane class
         bPane.setPadding(new Insets(0,20,15, 20));
 
+        //stores info from FileSource class into Listview
         clientList.setItems(new FileSource(clientpath).getAllFiles());
 
 
@@ -46,6 +50,7 @@ public class Main extends Application {
         bPane.setTop(addHBox());
         bPane.setCenter(addVBox());
 
+        //mouse click event handler for listview
         clientList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -66,10 +71,13 @@ public class Main extends Application {
             if (!(clientFileName == null)) {
 
                 this.runClientThread(clientFileName, 'u');
-                //this doesn't update until you run it twice. THe refresh DOES work but it's buggy!
+
+                //this doesn't update listview until you run/upload it twice.
+                // The refresh DOES work but it's buggy!
                 this.updateServerList();
 
             } else {
+                //throws error box
                 infoBox("Click on a file from your folder to Upload!"
                         , "__FILE NOT CHOSEN__", null);
             }
@@ -94,11 +102,12 @@ public class Main extends Application {
         Scene scene = new Scene(bPane, 600, 500);
         scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
         stage.setTitle("FILE SHARER V1.0");
-        stage.getIcons().add(new Image("resolutionIcon.jpg"));
+        stage.getIcons().add(new Image("resolutionIcon.jpg")); //image for stage
         stage.setScene(scene);
         stage.show();
 
     }
+    //adds the horizontal box and sets the conditions
     private HBox addHBox() {
         HBox topElements = new HBox();
         topElements.setPadding(new Insets(10, 0, 10, 60));
@@ -106,11 +115,13 @@ public class Main extends Application {
         topElements.getChildren().addAll(addClientLabel(), addServerLabel());
         return topElements;
     }
+    //adds the vertical box and sets the conditions
     private VBox addVBox() {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(addUploadButton(), addDownloadButton());
         return vbox;
     }
+    //adds the buttons and sets their conditions
     private Button addUploadButton() {
 
         buttonUpload.setPrefSize(30, 30);
@@ -130,6 +141,7 @@ public class Main extends Application {
     private Label addClientLabel() {return new Label("Your Folder");}
     private Label addServerLabel() {return new Label("Shared Folder");}
 
+    //this is an alert box which is a form of exceptionHandler/System.out.println("ERROR!")
     public void infoBox(String infoMessage, String titleBar, String headerMessage)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -138,7 +150,7 @@ public class Main extends Application {
         alert.setContentText(infoMessage);
         alert.showAndWait();
     }
-
+    //updates client/server lists but glitchy
     public void updateClientList() {
         clientList.setItems(new FileSource(clientpath).getAllFiles());
         bPane.setLeft(clientList);
@@ -147,12 +159,11 @@ public class Main extends Application {
         serverList.setItems(new FileSource(serverPath).getAllFiles());
         bPane.setRight(serverList);
     }
-
+    //runs Client on a new thread aside from parent GUI thread
     private void runClientThread(String fileName, char ab) {
 
-        //
-        //MAKE THE CLIENT TAKE VARIABLE -u or -d
         Thread clientThread = new Thread(new Client(fileName, ab, clientpath));
+        //links client thread to parent thread so client thread exits with GUI
         clientThread.setDaemon(true);
         clientThread.start();
     }

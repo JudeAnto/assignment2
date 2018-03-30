@@ -1,5 +1,6 @@
 import java.io.*;
 
+//class for reading and writing to files by Character
 public class FileIO {
 
     private String fileName = null;
@@ -9,6 +10,7 @@ public class FileIO {
         this.fileName = filePath;
     }
 
+    //reads from files by character
     public String readCharFile() {
 
         try {
@@ -25,6 +27,7 @@ public class FileIO {
         return fileContent;
     }
 
+    //writes to files by character
     public void writeCharFile(String fileContentToWrite) {
 
         try {
